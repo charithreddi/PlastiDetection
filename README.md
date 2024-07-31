@@ -1,4 +1,7 @@
 # PlastiDetection
+
+An award winning project 
+
 A mobile app that can detect plastic bottles from real time streaming
 
 
