@@ -1,6 +1,7 @@
 # PlastiDetection
 
 An award winning project 
+"PEOPLE'S CHOICE AWARD"
 
 A mobile app that can detect plastic bottles from real time streaming
 
