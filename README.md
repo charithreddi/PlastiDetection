@@ -12,15 +12,19 @@ The main purpose of this project is to be able to train and deploy a model using
 
 1. Introduction and Background
 
+
 The impact of climate change is getting more and more perceptible with each passing day. Its effects range from storms and wildfires to glacier retreats and increasing sea levels. To stop and remove the damage, we must react quickly. Plastic contamination is a significant factor in the issue. According to research, we found only around 9% of the 500 billion plastic bottles we use year are recycled. In this project, we'll investigate the identification of plastic bottles using machine vision.
 
 1.1 The problem you tried to solve
+
 The main problem we tried to solve was identifying a plastic bottle in a livestream containing multiple objects. Specifically, we want to solve the difficulties of automating this process in larger contexts such as factories or industrial settings that require cameras for waste management or introduce machine learning to surveillance of areas for pollution estimates. With regards to waste management, a challenge exists to successfully process and determine whether pollutants are present or if items are potentially recyclable. Detection of plastic bottles in this context is crucial in determining whether waste may be suitable for further pre-processing in a waste management plant. With regards to surveillance, when attempting to tackle pollution in the wild it can be a challenge to both correctly spot and identify waste in different contexts, as well as perform initial surveillance to estimate pollution in a particular area. This is well-suited to plastic bottle detection that can accurately identify bottles in different contexts and provide simple information to a user such as alerting them to a plastic bottle near them or maintaining a count for an area.
 
 1.2 Motivation
+
 The single-use water bottles made of plastic are the subject of this study. Every minute, over a million single-use water bottles are sold worldwide, but only 30% are recycled. The remainder ends up in landfills or the water without decomposing, persisting as hazardous particles that eventually find their way into people's bodies. Both human health and the environment of the Earth will be severely harmed if this goes on for many years. There is a solid motivation to increase the efficacy of current environmental solutions, such as waste management and human clean-up efforts, by harnessing machine learning models. Furthermore, there is a strong incentive to provide a practical solution to deploy an effective deep learning model on an easy-to-use platform, e.g., an Android application, to increase the likelihood that the average environmentally conscious person would adopt automatic plastic-bottle detection when they are next in a context with pollution.
 
 1.3 Application
+
 An essential application of Plastidetection would be determining the ability to recycle large amounts of waste. Creating an automatic method for classifying plastic bottles is the main problem of this project. This will identify the plastic bottle from the visuals we provide.
 This project aims to develop a model that can be paired with a mobile app that can accurately detect multiple plastic bottles that may be present in live video feeds. Concerning a waste management context, the app could be paired with feed from a waste management facility or video recordings of waste disposal to confirm if plastic bottles are present. This would be useful for correct waste sorting or maintaining data about the number of bottles provided (as would be of interest at a recycling centre). 
 For environmental pollution, this app would benefit individual users who could provide images or video footage of different areas containing plastic bottles. Key challenges that exist include
@@ -30,27 +34,32 @@ For environmental pollution, this app would benefit individual users who could p
 This task will likely require exploring models with high performance on the edge and other low-powered devices to achieve good performance.
 
 1.4 Dataset
+
 The plastic bottle dataset comprises roughly 4,000 YOLO (You Only Look Once) bounding box-annotated photos of plastic bottles that were taken in diverse outdoor areas. The dataset is intended for object detection model training and testing that can recognise plastic water bottles in realistic conditions. Because of the variety in the images, the dataset is both problematic and realistic, making it an essential tool for object detection in research and development. A benefit of this dataset is that images were taken of different bottles from different countries (based on labelling), improving the range of contexts in which images can be taken.
 The data has been divided into training, testing, and validation to enable training and testing. The testing and validation set contain 15% and 15% of the total number of images, with the training set making up 70%. This allows the researcher to optimise their methods and provides for a thorough examination of prediction accuracy.
 
 
   
 2 Overview of the architecture/system
+
 Two training pipelines will be explored to develop an object detection model effectively. The first is the YOLO (You Only Look Once) object detection pipeline, including version 5 and its recent release of version 8. This will be an incredible architecture to explore to increase the detection model’s effectiveness at high frame rates on lower power devices such as mobile phones for processing video and live stream data (Diwan et al., 2022). Both versions, five and eight, have been selected for exploration to compare their accuracy and avoid any compatibility issues that may arise when attempting to deploy the very recent YOLOv8 release. Transfer learning is planned by using YOLO’s provided weights pre-trained on the COCO dataset.
 The second training pipeline to be explored is Faster-RCNN which deviates from YOLO by pairing a region proposal network with a CNN feature extractor to form bounding boxes (Ren et al., 2015; He et al., 2015). This differs from YOLO’s ‘grid-based’ approach to object detection for declaring bounding boxes in spatial regions (Abonia Sojasingarayar, 2022). Furthermore, Faster-RCNN allows for more straightforward customization of its CNN backbone parameters, aiding experimentation with different architectures.
 
 2.1 CNN Architecture Design
+
 YOLO Common Components
 As Yolov8 is an iteration of Yolov5, the critical components of their architectures are essentially the same. The backbone is responsible for taking the input image and generating feature maps from it, forming the basis of a model. The primary structure involved in both gathering contextual information from the input image and separating the data into patterns makes this a vital stage in any object detector. The structure connecting the head and the backbone that collects as much data as possible before it is sent to the head is called the "neck." By limiting the loss of small-object knowledge to higher levels of abstraction, this structure is crucial in the transfer of that information. For distinct layers from the backbone to be aggregated and recover impact on the detection step, it accomplishes this by extending the size of the feature maps.
 
 Yolov8
-The Yolov8 Architecture can be divided into several key sections. The YOLOv8- system backbone takes advantage of a CSPDarknet53 CNN to use as an initial feature extractor. The model has five detection components and a prediction layer for outputting final bounding box decisions from the detection processes. Numerous object detection benchmarks have demonstrated that the YOLOv8 model achieves state-of-the-art performance while retaining high speed and economy.
- 
-(Jocher, 2023)
+
+The Yolov8 Architecture can be divided into several key sections. The YOLOv8- system backbone takes advantage of a CSPDarknet53 CNN to use as an initial feature extractor. The model has five detection components and a prediction layer for outputting final bounding box decisions from the detection processes. Numerous object detection benchmarks have demonstrated that the YOLOv8 model achieves state-of-the-art performance while retaining high speed and economy.(Jocher, 2023)
+
 Yolov5 – Final Architecture
+
 The Yolov5 backbone also uses the CSP-Darknet53 CNN for initial feature extraction. In the same fashion as Yolov8, it takes advantage of 3 convolution layers to make final predictions as the head of the model. PANet is used as an intermediate step between these stages to serve as the neck of the Yolov5 model. This net allows for bottom-up path augmentation to shorten the path between information and the model layers to simplify the prediction output (Liu et al., 2018). The diagram below provides a visualization of the default architecture with customized CSP bottleneck layers in-between rounds of convolution (Benjumea et al., 2023).(Katsamenis et al., 2022)
 
 Faster-RCNN
+
 Faster R-CNN comprises three main components: a CNN feature extractor similar to YOLO’s approach. Its second component is a region proposal network (RPN) that can divide the final output of the feature extractor into critical regions and predict where the bounding box should be for any objects (Achraf Khazri, 2019). The last element of the Fast-RCNN architecture is a series of fully connected layers that can translate these bounding boxes into accurate predictions like a traditional neural network.(Achraf Khazri, 2019)
 
 
