@@ -6,8 +6,8 @@ A mobile app that can detect plastic bottles from real time streaming
 This project has two main goals:
 -	Plastic bottle detection
 -	Potential use case for removing detected bottles.
+  
 The main purpose of this project is to be able to train and deploy a model using a mobile app so that it can detect plastic bottles from real time streaming. Furthermore, we can create an alert for any plastic bottles found with the goal of notifying a user so they can easily remove that bottle from their environment. The project attempts to use existing publicly available Kaggle dataset to detect plastic bottles; the dataset has 8000 annotated images and is suitable for mobile deployment. Training a model that can effectively operate on a computationally inexpensive device like a mobile phone, and on a range of environments that a user may encounter would both be challenges. Android Studio will need to be used for extensive testing.
-
 
 
 1. Introduction and Background
