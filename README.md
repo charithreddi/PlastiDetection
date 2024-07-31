@@ -3,7 +3,6 @@ A mobile app that can detect plastic bottles from real time streaming
 
 
 
-Abstract
 This project has two main goals:
 -	Plastic bottle detection
 -	Potential use case for removing detected bottles.
