@@ -75,17 +75,22 @@ There are four pages in our application.
 
 
 3 Results and Evaluation
+
 For initial experimentation 3 main frameworks were used – Yolov5, Yolov8, and Faster R-CNN. Detailed descriptions of their settings are provided below.
 
 3.1 Experimental Settings
+
 Yolov5
+
 Our Yolov5 model was trained using its default Yolov5 version 6 architecture using a CSP Darknet 53 CNN (Convolutional Neural Network) backbone. Transfer learning was used by taking the best state of a previous model that had used fewer epochs.
 Parameter	Justification
 Epochs = 300	This struck a balance between sufficient model accuracy and efficient training time. Current training took approximately 15 hours. Epochs were raised from 100 to 300 once the model was selected as our final architecture.
 Image Size = 640	A size of 640 was selected for the image size as this was the size of images provided by the coco dataset. In testing with a lower 400 value this was able to be scaled sufficiently without being computationally expensive on ram.
 Batch Size = 8	Batch sizes were experimented with starting at 64 and halving the value until one sufficiently met system requirements. 9 was the maximum available based on the image size and RAM provided.
 Weights = yolov5l.pt	Due to the small size of our dataset, pretrained weights were selected using the provided Yolov5 model to improve the overall accuracy of training. The large model was taken advantage of due to the significant variety in our data to attempt to improve accuracy
+
 Yolov8
+
 Our Yolov8 was also trained with no changes made to the default architecture. This includes the most recent Yolov5 Darknet CSP as its backbone, as well as several changes its convolutional layering (Jocher, 2023).
 Parameter	Justification
 Epochs = 100	100 epochs were selected to ensure the model achieved sufficient training time to converge to a high precision. This limit was placed so that sufficient early experimentation could be done without exhaustively training each model.
@@ -93,7 +98,9 @@ Image Size = 640	Image size was kept as 640 as Yolov8 was also trained on the co
 Batch Size = 16	Batch size was set to 16 for training as it was once again the largest that could be handled by the online environment.
 Optimizer = ‘SGD’	SGD was selected as an optimizer due to its ability to provide a more generalized final model (Keskar, Nitish Shirish & Socher, 2017). Adam and AdamW are to be explored in the future to compare their performance and training time.
 Weights = yolov8l.pt	Pre-trained weights were additionally used for this model as the dataset is not particularly large and would likely suffer in performance if trained from scratch. The large model was once again used due to the significant variety in our data to attempt to improve accuracy
+
 Faster R-CNN
+
 For the final experiment Faster R-CNN was used as an alternative to the Yolo family of frameworks. This was paired with a ResNet50 for a combination of high accuracy and reasonable training time, with higher families taking significant lengths to train sufficient epochs (Deng et al., 2018).
 Parameter	Justification
 Epochs = 50	Epochs were capped at 50 but are being re-trained with 100. This is due to the significant training time for the model as 50 epochs has currently taken 31 hours to train.
@@ -101,6 +108,7 @@ Model = Resnet50	ResNet50 was selected as the model for a balance of both its ac
 Batch Size = 8	Batch size was raised from 4 to 8 as this was still comfortably managed with the system RAM. Higher values were attempted but were unsuccessful.
 
 3.2 Pre-Processing (If Applicable)
+
 Limited pre-processing was applied to the dataset where necessary. As the dataset already came with a split in the YOLO format for its labelling, this significantly reduced the pre-processing needed. The following was conducted:
 
 -	The train/test/split was adjusted from 60/20/20 to 70/15/15 to improve the amount of training data for the model
@@ -108,18 +116,21 @@ Limited pre-processing was applied to the dataset where necessary. As the datase
 -	The dataset was duplicated with labels in Pascal-VOC format to suit Faster-RCNN
 
 3.3 Experimental Results
+
 CNN Framework	Train Precision	Validation Precision	Test Precision
 Yolov5	74.291%	71.9%	67.7%
 Yolov8	76.7%	76.9%	67.7%
 Faster R-CNN	37.0%	30.55%	35.6%
 
 3.4 Limitations
+
 While it may seem that the natural conclusion from the results was to deploy Yolov8 as our model, this had several compatibility issues deploying in tflite format for our Android application. As a substitute, our Yolov5 model was deployed with no problem and a solid ability to translate its detections in real time using a mobile phone camera. This was a significant limitation, and however fortunately, these models had similar identical test accuracy, which meant only a little was sacrificed to continue with this deployment. A limitation of our decision to use an Android application in the first place means that our target audience is mainly those who may be operating the application outdoors or conducting surveillance about pollution in a particular area. Another fundamental limitation is the size of bottles present in the image – as the dataset broadly includes more explicit and close-up photos of bottles, the detection rate on those that may be obscured outdoors or in extremely bright or dark lighting is significantly lower.
 We kept the default login credentials in the Android application as “admin”. We didn’t integrate the signup process because of database limitations. Also, our application uses only real-time streaming.
 
 
 
 4 Discussion
+
 Accuracy amongst all models was relatively low overall as the dataset contains many plastic bottles in widely different contexts. This overall made it challenging to provide a firm number of sample sizes in each environment and unpredictable to test. The train/test/split provided was also done randomly, so there is a risk of over-representing images in the test set. 
 Yolov8 provided the highest accuracy, marginally outperforming yolov5 across training, validation, and testing. This is likely due to its improved framework architecture and feature mapping, which increases its ability to make more complex decisions and generalizations – this has been quite useful given the wide variety in our dataset (Jocher, 2023). Both models saw notably lower accuracy on the test dataset. They may benefit from an improved model, such as adding dropout layers to the architecture or fine-tuning the regularization hyper-parameters to prevent a risk of overfitting. Both models share similar results when making detections on images. Figures attached in their results show example misclassifications and correct detections. The most common example that degrades accuracy is drawing a poor-quality bounding box or one with a significant background. This is primarily due to the variety of backgrounds and contexts in the dataset, making it challenging to determine bottles in particular circumstances.
 Faster-RCNN demonstrated significantly low accuracy, and insufficient epochs were likely provided for the model to converge correctly. The model accuracy showed no signs of an early plateau and would almost certainly benefit from extended training. The model is being retrained for 100 epochs and using the alternate DarkNet backbone to compare its performance to ResNet50. With this, the precision of the model can be improved as it is doubtful that this is the limit of Faster-RCNN's performance. Example inferences have been displayed above for the model that shows predictions. The most common misclassification the model tends to undergo is drawing excess bounding boxes that include a lot of background or multiple bounding boxes for only one object.
